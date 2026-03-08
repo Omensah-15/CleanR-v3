@@ -32,3 +32,9 @@
 | **Chunked streaming** | Handles files larger than RAM with `--chunk N` |
 
 ---
+
+## 👨‍💻 Author
+
+**Mensah Obed**
+[Email](mailto:heavenzlebron7@gmail.com) 
+[LinkedIn](https://www.linkedin.com/in/obed-mensah-87001237b)
