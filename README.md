@@ -1,4 +1,5 @@
 # CleanR v3 — Intelligent Data Cleaning Engine
+
 A command-line data processing engine that automatically cleans, profiles, validates, and optimizes datasets for analytics and machine learning workflows.
 ---
 
