@@ -7,8 +7,8 @@
   <img src="https://github.com/Omensah-15/CleanR-v3/blob/2e38d9a7fe8e1defb8abf56168a4c59671d38ac2/docs/demo2.gif" alt="Demo" width="800">
 </div>
 
-- Before: [messy_data.csv](https://github.com/Omensah-15/cleanr/blob/main/demo/examples/messy_data.csv)
-- After: [clean_data.csv](https://github.com/Omensah-15/cleanr/blob/main/demo/examples/clean_data.csv)
+- Before: [messy_data.csv](https://github.com/Omensah-15/CleanR-v3/blob/60202d590931d30e0fa7504f0283ac953a6f5510/docs/messy_data.csv)
+- After: [clean_data.csv](https://github.com/Omensah-15/CleanR-v3/blob/60202d590931d30e0fa7504f0283ac953a6f5510/docs/clean_data.csv)
 
 ---
 
