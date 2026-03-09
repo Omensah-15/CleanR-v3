@@ -214,6 +214,27 @@ class CleanREngine:
     def _run_pipeline(self, df: pd.DataFrame, schema: Dict,
                        audit: AuditLog, opts: Dict) -> pd.DataFrame:
 
+        bare = opts.get("bare", False)
+
+        def flag(key: str, default: bool) -> bool:
+            """
+            Resolve whether a pipeline step should run.
+
+            Normal mode:  step runs unless user passed --no-<step>.
+            Bare mode:    step is off unless user explicitly passed --<step>.
+
+            opts values:
+              None  -> user passed neither flag (argparse default)
+              True  -> user explicitly passed --<step>
+              False -> user explicitly passed --no-<step>
+            """
+            val = opts.get(key)  # None | True | False
+            if val is False:
+                return False      # --no-<step> always wins
+            if bare:
+                return val is True  # bare: only run if explicitly enabled
+            return True if val is None else val  # normal: default on
+
         def run(plugin: CleanrPlugin) -> pd.DataFrame:
             nonlocal df
             t  = time.time()
@@ -230,22 +251,22 @@ class CleanREngine:
             return df
 
         # Step 1 — Normalise column names
-        if opts.get("normalize", True):
+        if flag("normalize", True):
             df = run(NormalizeColumnsPlugin())
             # Re-infer schema with new names
             if schema:
                 schema = sch.infer_schema(df)
 
         # Step 2 — Trim whitespace
-        if opts.get("trim", True):
+        if flag("trim", True):
             df = run(TrimWhitespacePlugin())
 
         # Step 3 — Remove duplicates
-        if opts.get("dedup", True):
+        if flag("dedup", True):
             df = run(RemoveDuplicatesPlugin())
 
         # Step 4 — Drop constant columns (before type work)
-        if opts.get("drop_constant", True) and not opts.get("quick"):
+        if flag("drop_constant", True) and not opts.get("quick"):
             df = run(ConstantColumnDropperPlugin())
 
         # Step 5 — Column selection
@@ -256,20 +277,33 @@ class CleanREngine:
             }))
 
         # Step 6 — Smart missing value imputation
-        df = run(HandleMissingPlugin(config={
-            "strategy":           opts.get("impute_strategy", "auto"),
-            "fill_value":         opts.get("fill_value"),
-            "drop_na":            opts.get("drop_na", False),
-            "drop_col_threshold": opts.get("drop_col_threshold"),
-            "knn_k":              opts.get("knn_k", 5),
-        }))
+        impute_strategy = opts.get("impute_strategy", "auto")
+        fill_value      = opts.get("fill_value")
+        drop_na         = opts.get("drop_na", False)
+        drop_col_thresh = opts.get("drop_col_threshold")
+        # In bare mode, skip imputation entirely unless something was explicitly set
+        run_impute = (
+            not bare
+            or impute_strategy != "auto"
+            or fill_value is not None
+            or drop_na
+            or drop_col_thresh is not None
+        )
+        if run_impute:
+            df = run(HandleMissingPlugin(config={
+                "strategy":           impute_strategy,
+                "fill_value":         fill_value,
+                "drop_na":            drop_na,
+                "drop_col_threshold": drop_col_thresh,
+                "knn_k":              opts.get("knn_k", 5),
+            }))
 
         # Step 7 — Type coercion
-        if opts.get("auto_types", True) and schema:
+        if flag("auto_types", True) and schema:
             df = run(TypeCoercionPlugin(schema=schema))
 
         # Step 8 — Format validation
-        if opts.get("validate_formats", True) and schema:
+        if flag("validate_formats", True) and schema:
             df = run(FormatValidatorPlugin(schema=schema))
 
         # Step 9 — Outlier detection
@@ -299,7 +333,7 @@ class CleanREngine:
             df = run(RenameColumnsPlugin(config={"rename_map": opts["rename"]}))
 
         # Step 14 — Memory optimisation
-        if not opts.get("quick"):
+        if not opts.get("quick") and not bare:
             df = run(MemoryOptimizePlugin())
 
         # Step 15 — Custom plugins
