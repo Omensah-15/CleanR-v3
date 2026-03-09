@@ -30,6 +30,7 @@ Examples:
   cleanr data.csv --split full_name "first_name,last_name" " "
   cleanr data.csv --output-format parquet --no-fingerprint --quiet
   cleanr large.csv --chunk 100000 --quick
+  cleanr data.csv --bare --dedup --fill "nan"
 """,
     )
 
@@ -37,19 +38,32 @@ Examples:
     parser.add_argument("input",  help="Input file (CSV/TSV/JSON/JSONL/XLSX/Parquet)")
     parser.add_argument("output", nargs="?", help="Output path (default: <input>_clean.<ext>)")
 
+    # ── Bare mode ─────────────────────────────────────────────────────────────
+    parser.add_argument(
+        "--bare",
+        action="store_true",
+        default=False,
+        help=(
+            "Disable all automatic pipeline steps. Only the steps you "
+            "explicitly enable will run. Use this to compose an exact pipeline."
+        ),
+    )
+
     # ── Cleaning ──────────────────────────────────────────────────────────────
+    # default=None lets the engine distinguish "user explicitly passed this flag"
+    # from "argparse filled in a default". Required for --bare to work correctly.
     g = parser.add_argument_group("Cleaning Pipeline")
-    g.add_argument("--normalize",    dest="normalize",    action="store_true", default=True)
+    g.add_argument("--normalize",    dest="normalize",    action="store_true", default=None)
     g.add_argument("--no-normalize", dest="normalize",    action="store_false")
-    g.add_argument("--trim",         dest="trim",         action="store_true", default=True)
+    g.add_argument("--trim",         dest="trim",         action="store_true", default=None)
     g.add_argument("--no-trim",      dest="trim",         action="store_false")
-    g.add_argument("--dedup",        dest="dedup",        action="store_true", default=True)
+    g.add_argument("--dedup",        dest="dedup",        action="store_true", default=None)
     g.add_argument("--no-dedup",     dest="dedup",        action="store_false")
-    g.add_argument("--drop-constant",    dest="drop_constant",    action="store_true", default=True)
+    g.add_argument("--drop-constant",    dest="drop_constant",    action="store_true", default=None)
     g.add_argument("--no-drop-constant", dest="drop_constant",    action="store_false")
-    g.add_argument("--auto-types",   dest="auto_types",   action="store_true", default=True)
+    g.add_argument("--auto-types",   dest="auto_types",   action="store_true", default=None)
     g.add_argument("--no-auto-types",dest="auto_types",   action="store_false")
-    g.add_argument("--validate-formats",    dest="validate_formats", action="store_true", default=True)
+    g.add_argument("--validate-formats",    dest="validate_formats", action="store_true", default=None)
     g.add_argument("--no-validate-formats", dest="validate_formats", action="store_false")
 
     # ── Outliers ──────────────────────────────────────────────────────────────
@@ -137,6 +151,7 @@ Examples:
 
     # ── Build opts ────────────────────────────────────────────────────────────
     opts: Dict = {
+        "bare":                 args.bare,
         "normalize":            args.normalize,
         "trim":                 args.trim,
         "dedup":                args.dedup,
