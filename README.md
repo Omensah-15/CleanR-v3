@@ -13,14 +13,14 @@ For full installation instructions, feature reference, and working examples, vis
   <img src="https://github.com/Omensah-15/Cleanr_v3/blob/ac9a0ee0fbaf263a06396a0133c55ecb5d8b83c5/docs/demov3.gif" alt="Demo" width="800">
 </div>
 
-### command
-
+> Drop a file. Get clean data. CleanR automatically fixes column names, strips whitespace,
+> removes duplicates, fills missing values, corrects data types, and scores your data quality —
+> no config, no setup, no flags required.
 ```bash
-# One command. No configuration. CleanR inspects your data, fixes column names,
-# strips whitespace, removes duplicates, fills missing values, corrects data types,
-# and scores your data quality — all automatically.
 cleanr messy_data.csv
 ```
+
+↓ See it in action with this dataset
 
 - Before: [messy_data.csv](https://github.com/Omensah-15/CleanR-v3/blob/60202d590931d30e0fa7504f0283ac953a6f5510/docs/messy_data.csv)
 - After: [messy_data_clean.csv](https://github.com/Omensah-15/Cleanr_v3/blob/244bf41657897bed677b4183d9dc7600bb5e220a/docs/messy_data_clean.csv)
