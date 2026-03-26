@@ -4,8 +4,6 @@ CleanR is a fast, production grade data cleaning engine for the command line. Bu
 
 With one command, it auto detects your format and encoding, removes duplicates, imputes missing values using KNN, infers and corrects column types, flags invalid emails and phone numbers, detects outliers with Isolation Forest, scores your data quality across five dimensions, and produces a full audit trail with SHA 256 integrity fingerprints.
 
-Stop hunting through spreadsheet menus or writing one off cleaning scripts. CleanR does it all in seconds.
-
 For full installation instructions, feature reference, and working examples, visit the guide:
 **[Full Usage Guide](https://cleanr-v3-guide.vercel.app/)**
 
