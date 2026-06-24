@@ -12,7 +12,7 @@ For full installation instructions, feature reference, and working examples, vis
 ## Demo
 
 <div align="center">
-  <img src="https://github.com/Omensah-15/Cleanr_v3/blob/ac9a0ee0fbaf263a06396a0133c55ecb5d8b83c5/docs/demov3.gif" alt="Demo" width="800">
+  <img src="https://github.com/Omensah-15/CleanR-v3/blob/59bfc941c42efb629caa8af6267fa61058eef78f/docs/demov3.gif" alt="Demo" width="800">
 </div>
 
 > Drop a file. Get clean data. CleanR automatically fixes column names, strips whitespace,
